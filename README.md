@@ -1,5 +1,9 @@
 # echo-algorithm-visualization
 
+## Notes
+
+Написано за 6 часов, программирование "на коленке". Имплементированный алгоритм (файл `src/utils/echo.js`) любезно предоставлен [Гришей](https://github.com/Gorizory)
+
 ## Project setup
 ```
 npm install
@@ -27,3 +31,5 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
