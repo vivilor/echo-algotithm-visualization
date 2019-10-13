@@ -65,8 +65,7 @@ export default {
           x1,
           x2,
           y1,
-          y2,
-          'data-edge-id': props.edgeId
+          y2
         }
       }
     )
@@ -114,7 +113,10 @@ export default {
     return h(
       'g',
       {
-        class: 'edge'
+        class: 'edge',
+        attrs: {
+          'data-edge-id': props.edgeId
+        }
       },
       children
     )

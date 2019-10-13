@@ -24,7 +24,6 @@ export default {
           cx: props.x,
           cy: props.y,
           r: 20,
-          'data-node-id': props.nodeId,
           fill: props.state.initiatorId === props.nodeId ? 'pink' : 'white'
         },
         class: {
@@ -61,7 +60,10 @@ export default {
     )
     return h(
       'g',
-      { class: 'node' },
+      {
+        class: 'node',
+        attrs: { 'data-node-id': props.nodeId }
+      },
       [
         nodeCircle,
         nodeIndex,

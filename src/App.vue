@@ -234,9 +234,10 @@ export default {
       this.lastEdgeId = 0
     },
     onSvgMouseDown (ev) {
-      const { target, offsetX: x, offsetY: y } = ev
+      const { path, target, offsetX: x, offsetY: y } = ev
       console.log(ev)
-      console.log(x, y)
+
+      const layer = path.find(el => el.tagName === 'g')
 
       switch (this.mode) {
         case Mode.PLACE_NODE:
@@ -245,38 +246,40 @@ export default {
           }
           break
         case Mode.CONNECT:
-          if (this.firstConnectingNodeId < 0) {
-            this.firstConnectingNodeId = getDatasetNumberValue(target)('nodeId')
-          } else {
-            if (this.secondConnectingNodeId < 0) {
-              this.secondConnectingNodeId = getDatasetNumberValue(target)('nodeId')
+          if (this.firstConnectingNodeId < 0 && layer) {
+            this.firstConnectingNodeId = getDatasetNumberValue(layer)('nodeId')
+            return
+          }
 
-              if (this.secondConnectingNodeId >= 0) {
-                if (this.firstConnectingNodeId === this.secondConnectingNodeId) {
-                  this.secondConnectingNodeId = -1
-                } else {
-                  const existingEdge = this.edges.find(
-                    edge => (
-                      edge.firstNodeId === this.firstConnectingNodeId &&
-                      edge.secondNodeId === this.secondConnectingNodeId
-                    ) || (
-                      edge.firstNodeId === this.secondConnectingNodeId &&
-                      edge.secondNodeId === this.firstConnectingNodeId
-                    )
-                  )
+          if (this.secondConnectingNodeId < 0 && layer) {
+            this.secondConnectingNodeId = getDatasetNumberValue(layer)('nodeId')
 
-                  if (existingEdge) return
+            if (this.secondConnectingNodeId < 0) return
 
-                  this.$store.commit('PUSH_EDGE', this.createEdge())
-                  this.resetIdsForConnecting()
-                }
-              }
+            if (this.firstConnectingNodeId === this.secondConnectingNodeId) {
+              this.secondConnectingNodeId = -1
+              return
             }
+
+            const existingEdge = this.edges.find(
+              edge => (
+                edge.firstNodeId === this.firstConnectingNodeId &&
+                edge.secondNodeId === this.secondConnectingNodeId
+              ) || (
+                edge.firstNodeId === this.secondConnectingNodeId &&
+                edge.secondNodeId === this.firstConnectingNodeId
+              )
+            )
+
+            if (existingEdge) return
+
+            this.$store.commit('PUSH_EDGE', this.createEdge())
+            this.resetIdsForConnecting()
           }
           break
         case Mode.MOVE_NODE:
-          if (this.movingNodeId < 0) {
-            this.movingNodeId = getDatasetNumberValue(target)('nodeId')
+          if (this.movingNodeId < 0 && layer) {
+            this.movingNodeId = getDatasetNumberValue(layer)('nodeId')
           } else {
             const movingNode = this.nodes.find(v => v.nodeId === this.movingNodeId)
 
@@ -289,8 +292,8 @@ export default {
           }
           break
         case Mode.DELETE: {
-          const nodeId = getDatasetNumberValue(target)('nodeId')
-          const edgeId = getDatasetNumberValue(target)('edgeId')
+          const nodeId = getDatasetNumberValue(layer)('nodeId')
+          const edgeId = getDatasetNumberValue(layer)('edgeId')
 
           if (nodeId < 0 && edgeId < 0) {
             return
@@ -306,7 +309,7 @@ export default {
           break
         }
         case Mode.PICK_INITIATOR: {
-          const nodeId = getDatasetNumberValue(target)('nodeId')
+          const nodeId = getDatasetNumberValue(layer)('nodeId')
 
           if (nodeId > 0) {
             this.initiatorId = nodeId
