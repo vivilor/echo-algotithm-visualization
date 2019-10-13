@@ -32,12 +32,12 @@ export default new Vuex.Store({
       state.nodes.splice(removingNodeIndex, 1)
     },
     REMOVE_EDGE (state, edgeId) {
-      const removingEdge = state.nodes.find(findEdgeById, { id: edgeId })
-      const removingEdgeIndex = state.nodes.indexOf(removingEdge)
+      const removingEdge = state.edges.find(findEdgeById, { id: edgeId })
+      const removingEdgeIndex = state.edges.indexOf(removingEdge)
 
       if (removingEdgeIndex < 0) return
 
-      state.nodes.splice(removingEdgeIndex, 1)
+      state.edges.splice(removingEdgeIndex, 1)
     },
     SET_INITIATOR_ID (state, id) {
       state.initiatorId = id
